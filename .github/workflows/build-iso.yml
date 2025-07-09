@@ -18,7 +18,7 @@ jobs:
 
     - name: Set up dependencies
       run: |
-        sudo apt update && sudo apt dist-upgrade -y
+        find && sudo apt update && sudo apt dist-upgrade -y
         sudo apt install -y build-essential make golang-1.23 rpm qemu-utils genisoimage guestfs-tools
 
     - name: Build vxhd
