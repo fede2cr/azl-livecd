@@ -18,8 +18,8 @@ jobs:
 
     - name: Set up dependencies
       run: |
-        sudo apt update && sudo apt dist-upgrade -qy
-        sudo apt install -qy build-essential make golang-1.23 rpm qemu-utils genisoimage guestfs-tools
+        sudo apt update && sudo apt dist-upgrade -qqy
+        sudo apt install -qqy build-essential make golang-1.23 rpm qemu-utils genisoimage guestfs-tools
 
     - name: Build vxhd
       run: |
@@ -29,8 +29,8 @@ jobs:
 
     - name: Add azl user
       run: |
-        sudo virt-customize -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
-        sudo virt-customize -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
+        sudo virt-customize -v -x -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
+        sudo virt-customize -v -x -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
 
     - name: Build ISO
       run: |
