@@ -1,0 +1,14 @@
+# AZL LiveCD config
+os:
+  packages:
+    install:
+    - squashfs-tools
+    - tar
+    - device-mapper
+    - curl
+    - mdadm
+    - vim
+    - vim-extra
+    - less
+    - man
+    - mdadm

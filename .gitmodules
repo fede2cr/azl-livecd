@@ -1,0 +1,4 @@
+[submodule "azurelinux"]
+	path = azurelinux
+	url = https://github.com/microsoft/azurelinux.git
+        branch = 3.0-stable

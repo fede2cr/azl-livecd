@@ -1,0 +1,38 @@
+name: Build LiveCD with Azurelinux
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo with submodules
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set up dependencies
+      run: |
+        apt update && apt dist-upgrade -y
+        apt install -y build-essential make golang-1.23 rpm qemu-utils genisoimage guestfs-tools
+
+    - name: Build vxhd
+      run: |
+        cd azurelinux/toolkit
+        PATH=$PATH:/usr/lib/go-1.23/bin/ make image -j$(nproc) REBUILD_TOOLS=y REBUILD_PACKAGES=n CONFIG_FILE=./imageconfigs/core-efi.json
+        ls -lh ../out/images/core-efi/*vhdx
+
+    - name: Add azl user
+      run: |
+        virt-customize -a azurelinux/out/images/core-efi/core-3.0.20250707.2214.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
+        virt-customize -a ../../../out/images/core-efi/core-3.0.20250707.2214.vhdx --password azl:password:azl --password-crypto sha512
+
+    - name: Build ISO
+        cd azurelinux/toolkit/tools/imagecustomizer
+        go build .
+        sudo ./imagecustomizer   --build-dir ./build   --image-file ../../out/images/core-efi/core-3.0.*.vhdx   --output-image-file ./out/azl-livecd.iso   --output-image-format iso   --config-file ../../../../config.yaml
