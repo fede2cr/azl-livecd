@@ -33,6 +33,7 @@ jobs:
         virt-customize -a ../../../out/images/core-efi/core-3.0.20250707.2214.vhdx --password azl:password:azl --password-crypto sha512
 
     - name: Build ISO
+      run: |
         cd azurelinux/toolkit/tools/imagecustomizer
         go build .
         sudo ./imagecustomizer   --build-dir ./build   --image-file ../../out/images/core-efi/core-3.0.*.vhdx   --output-image-file ./out/azl-livecd.iso   --output-image-format iso   --config-file ../../../../config.yaml
