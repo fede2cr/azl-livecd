@@ -29,8 +29,8 @@ jobs:
 
     - name: Add azl user
       run: |
-        sudo virt-customize -v -x -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
-        sudo virt-customize -v -x -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
+        sudo virt-customize -v -x --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
+        sudo virt-customize -v -x --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
 
     - name: Build ISO
       run: |
