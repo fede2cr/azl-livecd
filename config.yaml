@@ -12,3 +12,4 @@ os:
     - less
     - man
     - mdadm
+    - bash-completion
