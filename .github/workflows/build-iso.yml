@@ -1,10 +1,11 @@
 name: Build LiveCD with Azurelinux
-
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -29,11 +30,19 @@ jobs:
 
     - name: Add azl user
       run: |
-        sudo virt-customize -v -x --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
-        sudo virt-customize -v -x --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
+        sudo virt-customize --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --run-command 'useradd -m -s /bin/bash -G sudo azl'
+        sudo virt-customize --no-network -a /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx --password azl:password:azl --password-crypto sha512
 
     - name: Build ISO
       run: |
         cd /home/runner/work/azl-livecd/azl-livecd/azurelinux/toolkit/tools/imagecustomizer
         go build .
         sudo ./imagecustomizer   --build-dir ./build   --image-file /home/runner/work/azl-livecd/azl-livecd/azurelinux/out/images/core-efi/core-3.0.*.vhdx   --output-image-file ./out/azl-livecd.iso   --output-image-format iso   --config-file ../../../../config.yaml
+
+    - name: Upload azl-livecd.iso to release
+      if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: /home/runner/work/azl-livecd/azl-livecd/azurelinux/toolkit/tools/imagecustomizer/out/azl-livecd.iso
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
